@@ -1,6 +1,8 @@
 import { createBrowserRouter } from 'react-router';
+
+import { App, NotFound, Events } from '../pages';
+
 import { RootLayout } from '../components';
-import { App } from '../pages';
 
 export const router = createBrowserRouter([
   {
@@ -10,6 +12,14 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <App />,
+      },
+      {
+        path: 'events',
+        element: <Events />,
+      },
+      {
+        path: '*',
+        element: <NotFound />,
       },
     ],
   },
