@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { Button, Space, Typography } from 'antd';
 
 import EventsImage from './assets/events.svg';
+
 import styles from './index.module.scss';
 
 const { Title, Paragraph } = Typography;
@@ -18,13 +19,12 @@ export const App = () => {
     <div className={styles.container}>
       <div className={styles.content}>
         <div className={styles.textBlock}>
-          <Title level={1}>Добро пожаловать в наше приложение!</Title>
+          <Title level={1}>Добро пожаловать!</Title>
           <Paragraph className={styles.description}>
             Организуйте и участвуйте в мероприятиях вместе с нами. Создавайте
-            незабываемые встречи и находите единомышленников для ваших
-            интересов.
+            интересные встречи и находите единомышленников.
           </Paragraph>
-          
+
           <Space size="large" className={styles.actions}>
             <Button type="primary" size="large" onClick={handleClick}>
               Смотреть мероприятия

@@ -1,7 +1,7 @@
 {
   "name": "client",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "author": {
     "name": "asovsyannikova"
@@ -16,6 +16,8 @@
     "antd": "^6.0.0-alpha.0",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
+    "@types/js-cookie": "^3.0.6",
+    "js-cookie": "^3.0.5",
     "ky": "^1.8.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
