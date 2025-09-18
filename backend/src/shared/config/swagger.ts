@@ -1,11 +1,10 @@
-// Лучше бы это были yml :)
 export const getSwaggerOptions = (port: number) => {
   return {
     definition: {
       openapi: '3.0.0',
       info: {
-        title: 'Mono-web',
-        version: '0.9.0',
+        title: 'Web developments',
+        version: 'dev',
         description: 'API для управления мероприятиями и пользователями',
       },
       servers: [

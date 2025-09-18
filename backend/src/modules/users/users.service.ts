@@ -13,7 +13,7 @@ export const createUser = async (createUserDto: CreateUserDto) => {
   const { username, email, password } = createUserDto;
 
   if (!username || !email || !password) {
-    throw new Error('Name and email are required');
+    throw new Error('Required fields are missing');
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,4 +34,17 @@ export const createUser = async (createUserDto: CreateUserDto) => {
     password: hashedPassword,
     createdAt: new Date(),
   });
+};
+
+export const getUserById = async (id: number) => {
+  const user = await User.findOne({
+    where: { id },
+    attributes: ['id', 'username', 'email', 'createdAt'],
+  });
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  return user;
 };
