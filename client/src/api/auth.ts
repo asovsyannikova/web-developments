@@ -2,12 +2,9 @@ import { api } from '@/api';
 
 import { AUTH_LOGIN_URL, AUTH_REGISTER_URL } from '@/constants';
 
-import type { SignInDto, SignUpDto, SignInResultSuccess } from './dto';
+import type { AuthError } from '@/types';
 
-interface AuthError {
-  status: number;
-  message: string;
-}
+import type { SignInDto, SignUpDto, SignInResultSuccess } from './dto';
 
 interface AuthResponse<T> {
   data?: T;
@@ -24,7 +21,7 @@ export const signIn = async (
 
     return { data };
   } catch (error: unknown) {
-    const err = error as { response?: { status: number; message: string } };
+    const err = error as { response?: AuthError };
     return {
       error: {
         status: err?.response?.status || 500,
