@@ -1,9 +1,10 @@
-import { Button, Form, Input, message, Typography } from 'antd';
+import { Button, Form, Input, message, Typography, type FormProps } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import styles from './index.module.scss';
 
 import { errors } from './errors';
+import { signUp } from '@/api';
 
 type FieldType = Partial<{
   username: string;
@@ -14,22 +15,27 @@ type FieldType = Partial<{
 export const SignUp = () => {
   const navigate = useNavigate();
 
-  const onFinishFailed = (errorInfo) => {
+  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
+    errorInfo,
+  ) => {
     message.error(errorInfo.errorFields[0].errors[0]);
   };
 
-  const onFinish = async (values) => {
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     if (!values.username || !values.email || !values.password) {
       return;
     }
 
-    console.log({
+    const response = await signUp({
       username: values.username,
       email: values.email,
       password: values.password,
     });
 
-    // TODO: Create request to API
+    if (response?.error) {
+      message.error(response.error.message);
+      return;
+    }
 
     message.success('Регистрация прошла успешно');
     navigate('/auth/in');

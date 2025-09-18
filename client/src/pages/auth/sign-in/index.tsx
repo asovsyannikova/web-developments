@@ -1,5 +1,9 @@
-import { Button, Form, Input, message, Typography } from 'antd';
+import { Button, Form, Input, message, Typography, type FormProps } from 'antd';
 import { Link, useNavigate } from 'react-router';
+
+import Cookies from 'js-cookie';
+
+import { signIn } from '@/api';
 
 import styles from './index.module.scss';
 
@@ -13,23 +17,39 @@ type FieldType = Partial<{
 export const SignIn = () => {
   const navigate = useNavigate();
 
-  const onFinishFailed = (errorInfo) => {
+  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (
+    errorInfo,
+  ) => {
     message.error(errorInfo.errorFields[0].errors[0]);
   };
 
-  const onFinish = async (values) => {
+  const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     if (!values.email || !values.password) {
       return;
     }
 
-    // TODO: Create request to API
-
-    console.log({
+    const response = await signIn({
       email: values.email,
       password: values.password,
     });
 
-    navigate('/events');
+    if (response.error) {
+      message.error(response.error.message);
+      return;
+    }
+
+    if (response.data?.token) {
+      Cookies.set('token', response.data?.token || '', {
+        secure: true,
+        sameSite: 'strict',
+        expires: 7,
+      });
+
+      navigate('/events');
+    } else {
+      message.error('Кажется что-то пошло не так...');
+      return;
+    }
   };
 
   return (

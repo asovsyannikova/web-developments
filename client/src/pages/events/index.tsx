@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Typography,
   Spin,
@@ -15,15 +15,36 @@ import { formatDate } from '@/utils';
 import { eventsMocks } from '@/__fixtures__';
 
 import styles from './index.module.scss';
+import { getEvents } from '@/api';
 
 const pageSizeOptions = [5, 10, 20, 50];
 
 export const Events = () => {
-  const [events] = useState(eventsMocks);
-  const [loading] = useState<boolean>(false);
-  const [error] = useState<boolean>(false);
+  const [events, setEvents] = useState(eventsMocks);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(pageSizeOptions[0]);
+  const [pageSize, setPageSize] = useState(pageSizeOptions[1]);
+
+  const fetchEvents = useCallback(async () => {
+    setLoading(true);
+    setError(false);
+
+    try {
+      const eventsData = await getEvents();
+      setEvents(eventsData);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Загрузка данных при изменении поискового запроса
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
