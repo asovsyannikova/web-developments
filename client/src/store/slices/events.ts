@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { EventsType, EventsState } from '@/types';
+import type { EventsType, EventsState, User } from '@/types';
 
 const initialState: EventsState = {
   data: [],
@@ -21,9 +21,27 @@ const eventsSlice = createSlice({
     setEventsError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
     },
+    updateEventParticipants: (
+      state,
+      action: PayloadAction<{
+        eventId: number;
+        participants: User[];
+      }>,
+    ) => {
+      console.log(action.payload);
+      const event = state.data.find((e) => e.id === action.payload.eventId);
+
+      if (event) {
+        event.participants = action.payload.participants;
+      }
+    },
   },
 });
 
-export const { setEvents, setEventsLoading, setEventsError } =
-  eventsSlice.actions;
+export const {
+  setEvents,
+  setEventsLoading,
+  setEventsError,
+  updateEventParticipants,
+} = eventsSlice.actions;
 export const eventsReducer = eventsSlice.reducer;
