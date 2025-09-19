@@ -45,7 +45,7 @@ export const SignIn = () => {
         expires: 7,
       });
 
-      navigate('/events');
+      navigate('/');
     } else {
       message.error('Кажется что-то пошло не так...');
       return;

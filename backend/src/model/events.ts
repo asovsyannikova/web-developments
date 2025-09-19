@@ -1,6 +1,5 @@
-import { sequelize } from '@config';
 import { Model, DataTypes } from '@sequelize/core';
-
+import { sequelize } from '@config';
 import { User } from './users';
 
 export class Event extends Model {
@@ -10,6 +9,7 @@ export class Event extends Model {
   declare date: Date;
   declare createdBy: number;
   declare createdAt: Date;
+  declare participants?: User[];
 }
 
 export const EventModel = Event.init(

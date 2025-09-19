@@ -5,11 +5,15 @@ import {
   createEvent,
   updateEvent,
   deleteEvent,
+  addParticipant,
+  removeParticipant,
+  getEventParticipants,
 } from './events.controller';
 import { validateErrors } from './events.errors';
 
 export const eventsRouter = Router();
 
+// Существующие роуты...
 /**
  * @swagger
  * components:
@@ -39,6 +43,31 @@ export const eventsRouter = Router();
  *         createdBy:
  *           type: integer
  *           example: 1
+ *         participants:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/User'
+ *     EventParticipant:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         eventId:
+ *           type: integer
+ *         userId:
+ *           type: integer
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         username:
+ *           type: string
+ *         email:
+ *           type: string
  */
 
 /**
@@ -48,126 +77,102 @@ export const eventsRouter = Router();
  *   description: Управление мероприятиями
  */
 
+eventsRouter.get('/:id', getEventById);
+eventsRouter.post('/', createEvent);
+eventsRouter.put('/:id', updateEvent);
+eventsRouter.delete('/:id', deleteEvent);
+
+// Новые роуты для участников
 /**
  * @swagger
- * /events/{id}:
- *   get:
- *     summary: Получить мероприятие по ID
+ * /events/{eventId}/participants:
+ *   post:
+ *     summary: Добавить участника к мероприятию
  *     tags: [Events]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: eventId
  *         required: true
  *         schema:
  *           type: integer
- *         example: 1
- *     responses:
- *       200:
- *         description: Данные мероприятия
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Event'
- *       404:
- *         description: Мероприятие не найдено
- *       500:
- *         description: Ошибка сервера
- */
-eventsRouter.get('/:id', getEventById);
-
-/**
- * @swagger
- * /events:
- *   post:
- *     summary: Создать новое мероприятие
- *     tags: [Events]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Event'
- *     responses:
- *       200:
- *         description: Созданное мероприятие
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Event'
- *       400:
- *         description: Неверные данные
- *       429:
- *         description: Превышен дневной лимит мероприятий
- *         content:
- *           application/json:
- *             example:
- *               message: "Дневной лимит на создание ивентов превышен (не более 5 шт. в сутки)"
- *       500:
- *         description: Ошибка сервера
- */
-eventsRouter.post('/', createEvent);
-
-/**
- * @swagger
- * /events/{id}:
- *   put:
- *     summary: Обновить мероприятие
- *     tags: [Events]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
  *             type: object
  *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               date:
- *                 type: string
- *                 format: date-time
+ *               userId:
+ *                 type: integer
  *     responses:
- *       200:
- *         description: Обновленные данные
+ *       201:
+ *         description: Участник добавлен
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Event'
- *       400:
- *         description: Неверные данные
+ *               $ref: '#/components/schemas/EventParticipant'
  *       404:
- *         description: Мероприятие не найдено
+ *         description: Мероприятие или пользователь не найдены
+ *       409:
+ *         description: Пользователь уже является участником
  *       500:
  *         description: Ошибка сервера
  */
-eventsRouter.put('/:id', updateEvent);
+eventsRouter.post('/:eventId/participants', addParticipant);
 
 /**
  * @swagger
- * /events/{id}:
+ * /events/{eventId}/participants/{userId}:
  *   delete:
- *     summary: Удалить мероприятие
+ *     summary: Удалить участника из мероприятия
  *     tags: [Events]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: eventId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Участник удален
+ *       404:
+ *         description: Участник не найден
+ *       500:
+ *         description: Ошибка сервера
+ */
+eventsRouter.delete('/:eventId/participants/:userId', removeParticipant);
+
+/**
+ * @swagger
+ * /events/{eventId}/participants:
+ *   get:
+ *     summary: Получить список участников мероприятия
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: eventId
  *         required: true
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Мероприятие удалено
+ *         description: Список участников
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
  *       404:
  *         description: Мероприятие не найдено
  *       500:
  *         description: Ошибка сервера
  */
-eventsRouter.delete('/:id', deleteEvent);
+eventsRouter.get('/:eventId/participants', getEventParticipants);
 
 eventsRouter.use(validateErrors);

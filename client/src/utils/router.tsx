@@ -3,7 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router';
 
 import Cookies from 'js-cookie';
 
-import { App, NotFound, Events, Auth, SignIn, SignUp } from '@/pages';
+import { App, NotFound, Events, Auth, SignIn, SignUp, Account } from '@/pages';
 
 import { RootLayout } from '@/components';
 
@@ -67,6 +67,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <Events />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: 'account',
+        element: (
+          <PrivateRoute>
+            <Account />
           </PrivateRoute>
         ),
       },
