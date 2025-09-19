@@ -1,0 +1,35 @@
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.headerDesktop {
+  justify-content: space-between;
+}
+
+.headerMobile {
+  flex-direction: column;
+  gap: 16px;
+
+  h3 {
+    text-align: center;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
+.profileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    flex-direction: column;
+    gap: 16px;
+  }
+}

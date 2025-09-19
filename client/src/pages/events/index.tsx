@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Typography,
   Spin,
@@ -12,36 +13,32 @@ import {
 import { CalendarOutlined, ReloadOutlined } from '@ant-design/icons';
 
 import { formatDate } from '@/utils';
-import { eventsMocks } from '@/__fixtures__';
+import { fetchAllEvents } from '@/store';
+import type { AppDispatch, RootState } from '@/store';
 
 import styles from './index.module.scss';
-import { getEvents } from '@/api';
 
 const pageSizeOptions = [5, 10, 20, 50];
 
 export const Events = () => {
-  const [events, setEvents] = useState(eventsMocks);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    data: events,
+    isLoading,
+    error,
+  } = useSelector((state: RootState) => state.events);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(pageSizeOptions[1]);
 
   const fetchEvents = useCallback(async () => {
-    setLoading(true);
-    setError(false);
-
     try {
-      const eventsData = await getEvents();
-      setEvents(eventsData);
-    } catch (error) {
-      console.error('Error fetching events:', error);
-      setError(true);
-    } finally {
-      setLoading(false);
+      await dispatch(fetchAllEvents()).unwrap();
+    } catch (err) {
+      console.error('Error fetching events:', err);
     }
-  }, []);
+  }, [dispatch]);
 
-  // Загрузка данных при изменении поискового запроса
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
@@ -55,7 +52,6 @@ export const Events = () => {
     setCurrentPage(1);
   }, []);
 
-  // Рассчитываем данные для текущей страницы
   const paginatedEvents = useMemo(() => {
     return events.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   }, [currentPage, events, pageSize]);
@@ -67,7 +63,11 @@ export const Events = () => {
         title="Упс! Что-то пошло не так"
         subTitle="Не удалось загрузить мероприятия"
         extra={
-          <Button type="primary" icon={<ReloadOutlined />}>
+          <Button
+            type="primary"
+            icon={<ReloadOutlined />}
+            onClick={fetchEvents} // Добавляем обработчик повтора
+          >
             Попробовать снова
           </Button>
         }
@@ -82,8 +82,7 @@ export const Events = () => {
           orientation="horizontal"
           style={{ width: '100%', justifyContent: 'space-between' }}
         >
-          <Typography.Title level={3}>Все полученные</Typography.Title>
-
+          <Typography.Title level={3}>Все мероприятия</Typography.Title>
           <Space>
             <span>Показывать по:</span>
             <Select
@@ -98,7 +97,7 @@ export const Events = () => {
           </Space>
         </Space>
 
-        {loading ? (
+        {isLoading ? (
           <div className={styles.loading}>
             <Spin size="large" />
             <Typography.Text type="secondary">
@@ -126,7 +125,7 @@ export const Events = () => {
                 ))}
               </div>
 
-              {events.length === 0 && !loading && (
+              {events.length === 0 && !isLoading && (
                 <Empty
                   description={'Нет мероприятий'}
                   className={styles.empty}
@@ -134,7 +133,6 @@ export const Events = () => {
               )}
             </div>
 
-            {/* Показываем пагинацию только если есть ивенты */}
             {events.length > 0 && (
               <div className={styles.pagination}>
                 <Pagination

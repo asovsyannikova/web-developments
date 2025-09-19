@@ -15,11 +15,11 @@ export const Header = () => {
           Мероприятия
         </Link>
 
-        {!isAuthenticated && (
-          <Link to="/auth/in">
-            <Button type="primary">Вход и регистрация</Button>
-          </Link>
-        )}
+        <Link to={isAuthenticated ? '/account' : '/auth/in'}>
+          <Button type="primary">
+            {isAuthenticated ? 'Аккаунт' : 'Вход и регистрация'}
+          </Button>
+        </Link>
       </nav>
     </header>
   );

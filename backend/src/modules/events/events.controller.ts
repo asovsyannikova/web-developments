@@ -9,7 +9,7 @@ export const getAllEvents = async (
   next: NextFunction,
 ) => {
   try {
-    const events = await EventsService.getAllEvents(req.query.search as string);
+    const events = await EventsService.getAllEvents();
     res.status(200).json(events);
   } catch (error) {
     next(error);

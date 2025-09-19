@@ -1,20 +1,9 @@
-import { Op } from '@sequelize/core';
-
 import { Event, User } from '@model';
 
 import { CreateEventDto, UpdateEventDto } from './dto';
 
-export const getAllEvents = async (searchQuery?: string) => {
-  const whereCondition = searchQuery
-    ? {
-        [Op.or]: [
-          { title: { [Op.iLike]: `%${searchQuery}%` } },
-          { description: { [Op.iLike]: `%${searchQuery}%` } },
-        ],
-      }
-    : {};
-
-  return Event.findAll({ where: whereCondition });
+export const getAllEvents = async () => {
+  return Event.findAll();
 };
 
 export const getEventById = async (id: number) => {
